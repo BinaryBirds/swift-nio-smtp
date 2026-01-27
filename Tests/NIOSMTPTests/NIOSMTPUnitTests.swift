@@ -5,15 +5,24 @@ import NIOCore
 final class NIOSMTPUnitTests: XCTestCase {
 
     func testSMTPEnvelopeValidation() throws {
-        XCTAssertThrowsError(try SMTPEnvelope(from: "a", recipients: [], data: "x"))
-        XCTAssertThrowsError(try SMTPEnvelope(from: "a", recipients: [""], data: "x"))
-        XCTAssertThrowsError(try SMTPEnvelope(from: "a", recipients: ["b"], data: ""))
-        XCTAssertNoThrow(try SMTPEnvelope(from: "a", recipients: ["b"], data: "x"))
+        XCTAssertThrowsError(
+            try SMTPEnvelope(from: "a", recipients: [], data: "x")
+        )
+        XCTAssertThrowsError(
+            try SMTPEnvelope(from: "a", recipients: [""], data: "x")
+        )
+        XCTAssertThrowsError(
+            try SMTPEnvelope(from: "a", recipients: ["b"], data: "")
+        )
+        XCTAssertNoThrow(
+            try SMTPEnvelope(from: "a", recipients: ["b"], data: "x")
+        )
     }
 
-
     func testSMTPEnvelopeWhitespaceRecipients() {
-        XCTAssertThrowsError(try SMTPEnvelope(from: "a", recipients: ["   "], data: "x"))
+        XCTAssertThrowsError(
+            try SMTPEnvelope(from: "a", recipients: ["   "], data: "x")
+        )
     }
 
     func testOutboundRequestEncodingAdditionalCommands() {
@@ -21,19 +30,40 @@ final class NIOSMTPUnitTests: XCTestCase {
         let encoder = OutboundSMTPRequestEncoder()
 
         encoder.encode(data: .startTLS, out: &buffer)
-        XCTAssertEqual(buffer.readString(length: buffer.readableBytes), "STARTTLS\r\n")
+        XCTAssertEqual(
+            buffer.readString(length: buffer.readableBytes),
+            "STARTTLS\r\n"
+        )
 
         buffer.clear()
-        encoder.encode(data: .sayHello(serverName: "smtp.example.com", helloMethod: .helo), out: &buffer)
-        XCTAssertEqual(buffer.readString(length: buffer.readableBytes), "HELO smtp.example.com\r\n")
+        encoder.encode(
+            data: .sayHello(serverName: "smtp.example.com", helloMethod: .helo),
+            out: &buffer
+        )
+        XCTAssertEqual(
+            buffer.readString(length: buffer.readableBytes),
+            "HELO smtp.example.com\r\n"
+        )
 
         buffer.clear()
-        encoder.encode(data: .sayHelloAfterTLS(serverName: "smtp.example.com", helloMethod: .ehlo), out: &buffer)
-        XCTAssertEqual(buffer.readString(length: buffer.readableBytes), "EHLO smtp.example.com\r\n")
+        encoder.encode(
+            data: .sayHelloAfterTLS(
+                serverName: "smtp.example.com",
+                helloMethod: .ehlo
+            ),
+            out: &buffer
+        )
+        XCTAssertEqual(
+            buffer.readString(length: buffer.readableBytes),
+            "EHLO smtp.example.com\r\n"
+        )
 
         buffer.clear()
         encoder.encode(data: .quit, out: &buffer)
-        XCTAssertEqual(buffer.readString(length: buffer.readableBytes), "QUIT\r\n")
+        XCTAssertEqual(
+            buffer.readString(length: buffer.readableBytes),
+            "QUIT\r\n"
+        )
     }
 
     func testHelloMethodRawValues() {
@@ -71,32 +101,56 @@ final class NIOSMTPUnitTests: XCTestCase {
         var buffer = ByteBufferAllocator().buffer(capacity: 128)
         let encoder = OutboundSMTPRequestEncoder()
 
-        encoder.encode(data: .sayHello(serverName: "smtp.example.com", helloMethod: .ehlo), out: &buffer)
-        XCTAssertEqual(buffer.readString(length: buffer.readableBytes), "EHLO smtp.example.com\r\n")
+        encoder.encode(
+            data: .sayHello(serverName: "smtp.example.com", helloMethod: .ehlo),
+            out: &buffer
+        )
+        XCTAssertEqual(
+            buffer.readString(length: buffer.readableBytes),
+            "EHLO smtp.example.com\r\n"
+        )
 
         buffer.clear()
         encoder.encode(data: .mailFrom("sender@example.com"), out: &buffer)
-        XCTAssertEqual(buffer.readString(length: buffer.readableBytes), "MAIL FROM:<sender@example.com>\r\n")
+        XCTAssertEqual(
+            buffer.readString(length: buffer.readableBytes),
+            "MAIL FROM:<sender@example.com>\r\n"
+        )
 
         buffer.clear()
         encoder.encode(data: .recipient("to@example.com"), out: &buffer)
-        XCTAssertEqual(buffer.readString(length: buffer.readableBytes), "RCPT TO:<to@example.com>\r\n")
+        XCTAssertEqual(
+            buffer.readString(length: buffer.readableBytes),
+            "RCPT TO:<to@example.com>\r\n"
+        )
 
         buffer.clear()
         encoder.encode(data: .data, out: &buffer)
-        XCTAssertEqual(buffer.readString(length: buffer.readableBytes), "DATA\r\n")
+        XCTAssertEqual(
+            buffer.readString(length: buffer.readableBytes),
+            "DATA\r\n"
+        )
 
         buffer.clear()
         encoder.encode(data: .beginAuthentication, out: &buffer)
-        XCTAssertEqual(buffer.readString(length: buffer.readableBytes), "AUTH LOGIN\r\n")
+        XCTAssertEqual(
+            buffer.readString(length: buffer.readableBytes),
+            "AUTH LOGIN\r\n"
+        )
 
         buffer.clear()
         encoder.encode(data: .authUser("user"), out: &buffer)
-        XCTAssertEqual(buffer.readString(length: buffer.readableBytes), "dXNlcg==\r\n")
+        XCTAssertEqual(
+            buffer.readString(length: buffer.readableBytes),
+            "dXNlcg==\r\n"
+        )
 
         buffer.clear()
         encoder.encode(data: .authPassword("pass"), out: &buffer)
-        XCTAssertEqual(buffer.readString(length: buffer.readableBytes), "cGFzcw==\r\n")
+        XCTAssertEqual(
+            buffer.readString(length: buffer.readableBytes),
+            "cGFzcw==\r\n"
+        )
     }
 
     func testTransferDataAppendsTerminator() {
@@ -104,10 +158,16 @@ final class NIOSMTPUnitTests: XCTestCase {
         let encoder = OutboundSMTPRequestEncoder()
 
         encoder.encode(data: .transferData("Hello"), out: &buffer)
-        XCTAssertEqual(buffer.readString(length: buffer.readableBytes), "Hello\r\n.\r\n")
+        XCTAssertEqual(
+            buffer.readString(length: buffer.readableBytes),
+            "Hello\r\n.\r\n"
+        )
 
         buffer.clear()
         encoder.encode(data: .transferData("Hello\r\n"), out: &buffer)
-        XCTAssertEqual(buffer.readString(length: buffer.readableBytes), "Hello\r\n.\r\n")
+        XCTAssertEqual(
+            buffer.readString(length: buffer.readableBytes),
+            "Hello\r\n.\r\n"
+        )
     }
 }
