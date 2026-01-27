@@ -101,3 +101,6 @@ try await eventLoopGroup.shutdownGracefully()
 ## Contributing
 
 [Pull requests](https://github.com/BinaryBirds/swift-nio-smtp/pulls) are welcome. Please keep changes focused and include tests for new logic.
+
+## Credits
+The NIOSMTP library is heavily inspired by [Mikroservices/Smtp](https://github.com/Mikroservices/Smtp).
