@@ -1,6 +1,6 @@
 //
 //  Envelope.swift
-//  NIOSMTP
+//  swift-nio-smtp
 //
 //  Created by Tibor Bodecs on 2026. 01. 26..
 //
@@ -23,7 +23,11 @@ public struct SMTPEnvelope: Sendable {
         recipients: [String],
         data: String
     ) throws(NIOSMTPError) {
-        guard recipients.contains(where: { !$0.isEmpty }) else {
+        guard
+            recipients.contains(where: {
+                $0.contains(where: { !$0.isWhitespace })
+            })
+        else {
             throw .invalidRecipient
         }
         guard !data.isEmpty else {

@@ -1,6 +1,6 @@
 //
 //  Security.swift
-//  NIOSMTP
+//  swift-nio-smtp
 //
 //  Created by Tibor Bodecs on 2020. 04. 28..
 //
@@ -8,6 +8,7 @@
 @preconcurrency import NIO
 @preconcurrency import NIOSSL
 
+/// TLS configuration for SMTP connections.
 public enum Security: Sendable {
 
     /// Communication without any encryption (even password is send as a plain text).
@@ -51,7 +52,8 @@ extension Security {
                 do {
                     try channel.pipeline.syncOperations.addHandler(sslHandler)
                     return channel.eventLoop.makeSucceededFuture(())
-                } catch {
+                }
+                catch {
                     return channel.eventLoop.makeFailedFuture(error)
                 }
             }

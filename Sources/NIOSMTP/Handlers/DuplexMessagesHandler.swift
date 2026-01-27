@@ -1,6 +1,6 @@
 //
 //  DuplexMessagesHandler.swift
-//  NIOSMTP
+//  swift-nio-smtp
 //
 //  Created by Tibor Bodecs on 2020. 04. 28..
 //

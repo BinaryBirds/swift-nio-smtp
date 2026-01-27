@@ -1,6 +1,6 @@
 //
 //  NIOSMTP.swift
-//  NIOSMTP
+//  swift-nio-smtp
 //
 //  Created by Tibor Bodecs on 2020. 04. 28..
 //
@@ -30,10 +30,10 @@ public struct NIOSMTP: Sendable {
     }
 
     ///
-    /// Send an Email with SMTP sender
+    /// Sends a message using SMTP.
     ///
-    /// - Parameter email: Email struct to send
-    /// - Throws: Sending errors
+    /// - Parameter envelope: SMTP envelope with a prebuilt DATA payload.
+    /// - Throws: `NIOSMTPError` when delivery fails.
     public func send(_ envelope: SMTPEnvelope) async throws(NIOSMTPError) {
         do {
             let result = try await sendWithPromise(envelope: envelope).get()
@@ -43,9 +43,11 @@ public struct NIOSMTP: Sendable {
             case .failure(let error):
                 throw error
             }
-        } catch let error as NIOSMTPError {
+        }
+        catch let error as NIOSMTPError {
             throw error
-        } catch {
+        }
+        catch {
             throw .unknown(error)
         }
     }
@@ -90,7 +92,8 @@ public struct NIOSMTP: Sendable {
                             defaultHandlers
                         )
                         return channel.eventLoop.makeSucceededFuture(())
-                    } catch {
+                    }
+                    catch {
                         return channel.eventLoop.makeFailedFuture(error)
                     }
                 }
@@ -107,7 +110,8 @@ public struct NIOSMTP: Sendable {
                 connection.whenSuccess { $0.close(promise: nil) }
                 return .success(true)
             }
-            .flatMapError { error -> EventLoopFuture<Result<Bool, NIOSMTPError>> in
+            .flatMapError {
+                error -> EventLoopFuture<Result<Bool, NIOSMTPError>> in
                 let smtpError = (error as? NIOSMTPError) ?? .unknown(error)
                 return eventLoop.makeSucceededFuture(.failure(smtpError))
             }

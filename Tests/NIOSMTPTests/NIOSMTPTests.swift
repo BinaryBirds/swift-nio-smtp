@@ -1,30 +1,17 @@
+//
+//  swift-nio-smtpTests.swift
+//  swift-nio-smtp
+//
+//  Created by Binary Birds on 2026. 01. 27..
+
 import XCTest
-import Foundation
 import NIO
 import NIOSMTP
 import Logging
 
 final class NIOSMTPTests: XCTestCase {
 
-    var host: String {
-        ProcessInfo.processInfo.environment["SMTP_HOST"]!
-    }
-
-    var user: String {
-        ProcessInfo.processInfo.environment["SMTP_USER"]!
-    }
-
-    var pass: String {
-        ProcessInfo.processInfo.environment["SMTP_PASS"]!
-    }
-
-    var from: String {
-        ProcessInfo.processInfo.environment["MAIL_FROM"]!
-    }
-
-    var to: String {
-        ProcessInfo.processInfo.environment["MAIL_TO"]!
-    }
+    private let config = TestSMTPConfig.load()
 
     private func send(_ envelope: SMTPEnvelope) async throws {
 
@@ -34,10 +21,10 @@ final class NIOSMTPTests: XCTestCase {
         let smtp = NIOSMTP(
             eventLoopGroup: eventLoopGroup,
             configuration: .init(
-                hostname: host,
+                hostname: config.host,
                 signInMethod: .credentials(
-                    username: user,
-                    password: pass
+                    username: config.user,
+                    password: config.pass
                 )
             ),
             logger: .init(label: "nio-smtp")
@@ -50,51 +37,54 @@ final class NIOSMTPTests: XCTestCase {
     // MARK: - test cases
 
     func testPlainText() async throws {
+        if !config.isComplete { return }
         let raw = rawMessage(
-            from: from,
-            to: to,
+            from: config.from,
+            to: config.to,
             subject: "Test plain text email",
             body: "This is a plain text email."
         )
         let envelope = try SMTPEnvelope(
-            from: from,
-            recipients: [to],
+            from: config.from,
+            recipients: [config.to],
             data: raw
         )
         try await send(envelope)
     }
 
     func testHMTL() async throws {
+        if !config.isComplete { return }
         let raw = rawMessage(
-            from: from,
-            to: to,
+            from: config.from,
+            to: config.to,
             subject: "Test HTML email",
             contentType: "text/html; charset=\"UTF-8\"",
             body: "This is a <b>HTML</b> email."
         )
         let envelope = try SMTPEnvelope(
-            from: from,
-            recipients: [to],
+            from: config.from,
+            recipients: [config.to],
             data: raw
         )
         try await send(envelope)
     }
 
     func testAttachment() async throws {
+        if !config.isComplete { return }
         let boundary = "boundary-test"
         let raw = rawMultipartMessage(
-            from: from,
-            to: to,
+            from: config.from,
+            to: config.to,
             subject: "Test with attachment",
             boundary: boundary,
             body: "This is an email with a very small attachment.",
-            attachmentName: "test.png",
-            attachmentType: "image/png",
-            attachmentBase64: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+            attachmentName: "test.txt",
+            attachmentType: "text/plain",
+            attachmentBase64: "SGVsbG8gYXR0YWNobWVudAo="
         )
         let envelope = try SMTPEnvelope(
-            from: from,
-            recipients: [to],
+            from: config.from,
+            recipients: [config.to],
             data: raw
         )
         try await send(envelope)
@@ -119,8 +109,9 @@ private extension NIOSMTPTests {
             "Mime-Version: 1.0",
             "",
             body,
-            ""
-        ].joined(separator: "\r\n")
+            "",
+        ]
+        .joined(separator: "\r\n")
     }
 
     func rawMultipartMessage(
@@ -156,7 +147,8 @@ private extension NIOSMTPTests {
             attachmentBase64,
             "",
             "--\(boundary)--",
-            ""
-        ].joined(separator: "\r\n")
+            "",
+        ]
+        .joined(separator: "\r\n")
     }
 }

@@ -1,6 +1,6 @@
 //
 //  Base64.swift
-//  NIOSMTP
+//  swift-nio-smtp
 //
 //  Created by Binary Birds on 2026. 01. 26..
 //
@@ -13,7 +13,10 @@ extension Array where Element == UInt8 {
             return ""
         }
 
-        let alphabet = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".utf8)
+        let alphabet = Array(
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+                .utf8
+        )
         var output: [UInt8] = []
         output.reserveCapacity(((count + 2) / 3) * 4)
 
@@ -23,20 +26,23 @@ extension Array where Element == UInt8 {
             let byte1 = (index + 1 < count) ? self[index + 1] : 0
             let byte2 = (index + 2 < count) ? self[index + 2] : 0
 
-            let triple = (UInt32(byte0) << 16) | (UInt32(byte1) << 8) | UInt32(byte2)
+            let triple =
+                (UInt32(byte0) << 16) | (UInt32(byte1) << 8) | UInt32(byte2)
 
             output.append(alphabet[Int((triple >> 18) & 0x3F)])
             output.append(alphabet[Int((triple >> 12) & 0x3F)])
 
             if index + 1 < count {
                 output.append(alphabet[Int((triple >> 6) & 0x3F)])
-            } else {
+            }
+            else {
                 output.append(UInt8(ascii: "="))
             }
 
             if index + 2 < count {
                 output.append(alphabet[Int(triple & 0x3F)])
-            } else {
+            }
+            else {
                 output.append(UInt8(ascii: "="))
             }
 

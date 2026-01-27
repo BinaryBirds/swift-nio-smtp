@@ -1,6 +1,6 @@
 //
 //  StartTLSHandler.swift
-//  NIOSMTP
+//  swift-nio-smtp
 //
 //  Created by Tibor Bodecs on 2020. 04. 28..
 //
@@ -94,7 +94,8 @@ final class StartTLSHandler: ChannelDuplexHandler,
                     name: "NIOSSLClientHandler",
                     position: .first
                 )
-            } catch {
+            }
+            catch {
                 allDonePromise.fail(error)
                 return
             }
