@@ -39,9 +39,9 @@ struct TestSMTPConfig {
 
     var isComplete: Bool {
         !host.isEmpty
-            || !user.isEmpty
-            || !pass.isEmpty
-            || !from.isEmpty
-            || !to.isEmpty
+            && !user.isEmpty
+            && !pass.isEmpty
+            && !from.isEmpty
+            && !to.isEmpty
     }
 }

@@ -2,7 +2,11 @@
 
 Lightweight SMTP client built on top of SwiftNIO.
 
-[![Release: 1.0.0-beta.1](https://img.shields.io/badge/Release-1%2E0%2E0--beta%2E1-F05138)](https://github.com/BinaryBirds/swift-nio-smtp/releases/tag/1.0.0-beta.1)
+[
+    ![Release: 1.0.0-beta.1](https://img.shields.io/badge/Release-1%2E0%2E0--beta%2E1-F05138)
+]
+    (https://github.com/BinaryBirds/swift-nio-smtp/releases/tag/1.0.0-beta.1
+)
 
 ## Features
 
