@@ -4,41 +4,44 @@
 //
 //  Created by Binary Birds on 2026. 01. 27..
 
-import XCTest
+import Testing
 import NIOCore
 @testable import NIOSMTP
 
-final class NIOSMTPUnitTests: XCTestCase {
+@Suite
+struct NIOSMTPUnitTests {
 
-    func testSMTPEnvelopeValidation() throws {
-        XCTAssertThrowsError(
+    @Test
+    func smtpEnvelopeValidation() throws {
+        #expect(throws: (any Error).self) {
             try SMTPEnvelope(from: "a", recipients: [], data: "x")
-        )
-        XCTAssertThrowsError(
+        }
+        #expect(throws: (any Error).self) {
             try SMTPEnvelope(from: "a", recipients: [""], data: "x")
-        )
-        XCTAssertThrowsError(
+        }
+        #expect(throws: (any Error).self) {
             try SMTPEnvelope(from: "a", recipients: ["b"], data: "")
-        )
-        XCTAssertNoThrow(
-            try SMTPEnvelope(from: "a", recipients: ["b"], data: "x")
+        }
+        #expect(
+            (try? SMTPEnvelope(from: "a", recipients: ["b"], data: "x")) != nil
         )
     }
 
-    func testSMTPEnvelopeWhitespaceRecipients() {
-        XCTAssertThrowsError(
+    @Test
+    func smtpEnvelopeWhitespaceRecipients() {
+        #expect(throws: (any Error).self) {
             try SMTPEnvelope(from: "a", recipients: ["   "], data: "x")
-        )
+        }
     }
 
-    func testOutboundRequestEncodingAdditionalCommands() {
+    @Test
+    func outboundRequestEncodingAdditionalCommands() {
         var buffer = ByteBufferAllocator().buffer(capacity: 128)
         let encoder = OutboundSMTPRequestEncoder()
 
         encoder.encode(data: .startTLS, out: &buffer)
-        XCTAssertEqual(
-            buffer.readString(length: buffer.readableBytes),
-            "STARTTLS\r\n"
+        #expect(
+            buffer.readString(length: buffer.readableBytes) == "STARTTLS\r\n"
         )
 
         buffer.clear()
@@ -46,9 +49,9 @@ final class NIOSMTPUnitTests: XCTestCase {
             data: .sayHello(serverName: "smtp.example.com", helloMethod: .helo),
             out: &buffer
         )
-        XCTAssertEqual(
-            buffer.readString(length: buffer.readableBytes),
-            "HELO smtp.example.com\r\n"
+        #expect(
+            buffer.readString(length: buffer.readableBytes)
+                == "HELO smtp.example.com\r\n"
         )
 
         buffer.clear()
@@ -59,51 +62,52 @@ final class NIOSMTPUnitTests: XCTestCase {
             ),
             out: &buffer
         )
-        XCTAssertEqual(
-            buffer.readString(length: buffer.readableBytes),
-            "EHLO smtp.example.com\r\n"
+        #expect(
+            buffer.readString(length: buffer.readableBytes)
+                == "EHLO smtp.example.com\r\n"
         )
 
         buffer.clear()
         encoder.encode(data: .quit, out: &buffer)
-        XCTAssertEqual(
-            buffer.readString(length: buffer.readableBytes),
-            "QUIT\r\n"
-        )
+        #expect(buffer.readString(length: buffer.readableBytes) == "QUIT\r\n")
     }
 
-    func testHelloMethodRawValues() {
-        XCTAssertEqual(HelloMethod.helo.rawValue, "HELO")
-        XCTAssertEqual(HelloMethod.ehlo.rawValue, "EHLO")
+    @Test
+    func helloMethodRawValues() {
+        #expect(HelloMethod.helo.rawValue == "HELO")
+        #expect(HelloMethod.ehlo.rawValue == "EHLO")
     }
 
-    func testSignInMethodCases() {
+    @Test
+    func signInMethodCases() {
         let anonymous = SignInMethod.anonymous
         switch anonymous {
         case .anonymous:
-            XCTAssertTrue(true)
+            #expect(Bool(true))
         case .credentials:
-            XCTFail("unexpected credentials")
+            #expect(Bool(false), "unexpected credentials")
         }
 
         let credentials = SignInMethod.credentials(username: "u", password: "p")
         switch credentials {
         case .credentials(let username, let password):
-            XCTAssertEqual(username, "u")
-            XCTAssertEqual(password, "p")
+            #expect(username == "u")
+            #expect(password == "p")
         case .anonymous:
-            XCTFail("unexpected anonymous")
+            #expect(Bool(false), "unexpected anonymous")
         }
     }
 
-    func testSecurityStartTLSFlags() {
-        XCTAssertFalse(Security.none.isStartTLSEnabled)
-        XCTAssertFalse(Security.ssl.isStartTLSEnabled)
-        XCTAssertTrue(Security.startTLS.isStartTLSEnabled)
-        XCTAssertTrue(Security.startTLSIfAvailable.isStartTLSEnabled)
+    @Test
+    func securityStartTLSFlags() {
+        #expect(!Security.none.isStartTLSEnabled)
+        #expect(!Security.ssl.isStartTLSEnabled)
+        #expect(Security.startTLS.isStartTLSEnabled)
+        #expect(Security.startTLSIfAvailable.isStartTLSEnabled)
     }
 
-    func testOutboundRequestEncoding() {
+    @Test
+    func outboundRequestEncoding() {
         var buffer = ByteBufferAllocator().buffer(capacity: 128)
         let encoder = OutboundSMTPRequestEncoder()
 
@@ -111,69 +115,63 @@ final class NIOSMTPUnitTests: XCTestCase {
             data: .sayHello(serverName: "smtp.example.com", helloMethod: .ehlo),
             out: &buffer
         )
-        XCTAssertEqual(
-            buffer.readString(length: buffer.readableBytes),
-            "EHLO smtp.example.com\r\n"
+        #expect(
+            buffer.readString(length: buffer.readableBytes)
+                == "EHLO smtp.example.com\r\n"
         )
 
         buffer.clear()
         encoder.encode(data: .mailFrom("sender@example.com"), out: &buffer)
-        XCTAssertEqual(
-            buffer.readString(length: buffer.readableBytes),
-            "MAIL FROM:<sender@example.com>\r\n"
+        #expect(
+            buffer.readString(length: buffer.readableBytes)
+                == "MAIL FROM:<sender@example.com>\r\n"
         )
 
         buffer.clear()
         encoder.encode(data: .recipient("to@example.com"), out: &buffer)
-        XCTAssertEqual(
-            buffer.readString(length: buffer.readableBytes),
-            "RCPT TO:<to@example.com>\r\n"
+        #expect(
+            buffer.readString(length: buffer.readableBytes)
+                == "RCPT TO:<to@example.com>\r\n"
         )
 
         buffer.clear()
         encoder.encode(data: .data, out: &buffer)
-        XCTAssertEqual(
-            buffer.readString(length: buffer.readableBytes),
-            "DATA\r\n"
-        )
+        #expect(buffer.readString(length: buffer.readableBytes) == "DATA\r\n")
 
         buffer.clear()
         encoder.encode(data: .beginAuthentication, out: &buffer)
-        XCTAssertEqual(
-            buffer.readString(length: buffer.readableBytes),
-            "AUTH LOGIN\r\n"
+        #expect(
+            buffer.readString(length: buffer.readableBytes)
+                == "AUTH LOGIN\r\n"
         )
 
         buffer.clear()
         encoder.encode(data: .authUser("user"), out: &buffer)
-        XCTAssertEqual(
-            buffer.readString(length: buffer.readableBytes),
-            "dXNlcg==\r\n"
+        #expect(
+            buffer.readString(length: buffer.readableBytes) == "dXNlcg==\r\n"
         )
 
         buffer.clear()
         encoder.encode(data: .authPassword("pass"), out: &buffer)
-        XCTAssertEqual(
-            buffer.readString(length: buffer.readableBytes),
-            "cGFzcw==\r\n"
+        #expect(
+            buffer.readString(length: buffer.readableBytes) == "cGFzcw==\r\n"
         )
     }
 
-    func testTransferDataAppendsTerminator() {
+    @Test
+    func transferDataAppendsTerminator() {
         var buffer = ByteBufferAllocator().buffer(capacity: 128)
         let encoder = OutboundSMTPRequestEncoder()
 
         encoder.encode(data: .transferData("Hello"), out: &buffer)
-        XCTAssertEqual(
-            buffer.readString(length: buffer.readableBytes),
-            "Hello\r\n.\r\n"
+        #expect(
+            buffer.readString(length: buffer.readableBytes) == "Hello\r\n.\r\n"
         )
 
         buffer.clear()
         encoder.encode(data: .transferData("Hello\r\n"), out: &buffer)
-        XCTAssertEqual(
-            buffer.readString(length: buffer.readableBytes),
-            "Hello\r\n.\r\n"
+        #expect(
+            buffer.readString(length: buffer.readableBytes) == "Hello\r\n.\r\n"
         )
     }
 }

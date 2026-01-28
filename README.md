@@ -1,16 +1,16 @@
 # SwiftNIO SMTP
 
-Lightweight SMTP client built on SwiftNIO.
+Lightweight SMTP client built on top of SwiftNIO.
 
-![Release: 1.0.0-beta.1](https://img.shields.io/badge/Release-1%2E0%2E0--beta%2E1-F05138)
+[![Release: 1.0.0-beta.1](https://img.shields.io/badge/Release-1%2E0%2E0--beta%2E1-F05138)](https://github.com/BinaryBirds/swift-nio-smtp/releases/tag/1.0.0-beta.1)
 
 ## Features
 
-- Async SMTP client over SwiftNIO
+- Async SMTP client build over SwiftNIO
 - STARTTLS and SSL support
 - AUTH LOGIN
-- Prebuilt raw DATA payload support
-- Foundation free
+- Raw DATA payload support
+- No Foundation framework dependency
 
 ## Requirements
 
@@ -19,18 +19,18 @@ Lightweight SMTP client built on SwiftNIO.
 
 - Swift 6.1+
 - Platforms:
-    - macOS 13+
-    - iOS 16+
-    - tvOS 16+
-    - watchOS 9+
-    - visionOS 1+
+    - macOS 15+
+    - iOS 18+
+    - tvOS 18+
+    - watchOS 11+
+    - visionOS 2+
 
 ## Installation
 
 Use Swift Package Manager; add the dependency to your `Package.swift` file:
 
 ```swift
-.package(url: "https://github.com/BinaryBirds/swift-nio-smtp", .upToNextMinor(from: "1.0.0-beta.1")),
+.package(url: "https://github.com/BinaryBirds/swift-nio-smtp", exact: "1.0.0-beta.1"),
 ```
 
 Then add `NIOSMTP` to your target dependencies:
@@ -40,6 +40,16 @@ Then add `NIOSMTP` to your target dependencies:
 ```
 
 ## Usage
+
+[ 
+    ![DocC API documentation](https://img.shields.io/badge/DocC-API_documentation-F05138)
+](
+    https://binarybirds.github.io/swift-nio-smtp/
+)
+
+API documentation is available at the following link.
+
+### Example
 
 Create an `SMTPEnvelope` with a raw DATA payload and send it using `NIOSMTP`.
 
@@ -83,11 +93,6 @@ let envelope = try SMTPEnvelope(
 try await smtp.send(envelope)
 try await eventLoopGroup.shutdownGracefully()
 ```
-
-## Related repositories
-
-- [Feather Mail](https://github.com/feather-framework/feather-mail)
-- [Feather Mail Driver SMTP](https://github.com/feather-framework/feather-mail-driver-smtp)
 
 ## Development
 

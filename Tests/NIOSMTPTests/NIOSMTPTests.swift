@@ -4,12 +4,13 @@
 //
 //  Created by Binary Birds on 2026. 01. 27..
 
-import XCTest
+import Testing
 import NIO
 import NIOSMTP
 import Logging
 
-final class NIOSMTPTests: XCTestCase {
+@Suite
+struct NIOSMTPTests {
 
     private let config = TestSMTPConfig.load()
 
@@ -36,7 +37,8 @@ final class NIOSMTPTests: XCTestCase {
 
     // MARK: - test cases
 
-    func testPlainText() async throws {
+    @Test
+    func plainText() async throws {
         if !config.isComplete { return }
         let raw = rawMessage(
             from: config.from,
@@ -52,7 +54,8 @@ final class NIOSMTPTests: XCTestCase {
         try await send(envelope)
     }
 
-    func testHMTL() async throws {
+    @Test
+    func hmtl() async throws {
         if !config.isComplete { return }
         let raw = rawMessage(
             from: config.from,
@@ -69,7 +72,8 @@ final class NIOSMTPTests: XCTestCase {
         try await send(envelope)
     }
 
-    func testAttachment() async throws {
+    @Test
+    func attachment() async throws {
         if !config.isComplete { return }
         let boundary = "boundary-test"
         let raw = rawMultipartMessage(

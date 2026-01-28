@@ -11,7 +11,7 @@ var defaultSwiftSettings: [SwiftSetting] = [
     // https://forums.swift.org/t/experimental-support-for-lifetime-dependencies-in-swift-6-2-and-beyond/78638
     .enableExperimentalFeature("Lifetimes"),
     // https://github.com/swiftlang/swift/pull/65218
-    .enableExperimentalFeature("AvailabilityMacro=FeatherMailAvailability:macOS 13, iOS 16, watchOS 9, tvOS 16, visionOS 1"),
+    .enableExperimentalFeature("AvailabilityMacro=swiftNIOSMTP:macOS 15, iOS 18, watchOS 11, tvOS 18, visionOS 2"),
 ]
 
 #if compiler(>=6.2)
@@ -24,11 +24,11 @@ defaultSwiftSettings.append(
 let package = Package(
     name: "swift-nio-smtp",
     platforms: [
-        .macOS(.v13),
-        .iOS(.v16),
-        .tvOS(.v16),
-        .watchOS(.v9),
-        .visionOS(.v1)
+        .macOS(.v15),
+        .iOS(.v18),
+        .tvOS(.v18),
+        .watchOS(.v11),
+        .visionOS(.v2),
     ],
     products: [
         .library(name: "NIOSMTP", targets: ["NIOSMTP"]),
