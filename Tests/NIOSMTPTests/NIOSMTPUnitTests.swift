@@ -83,9 +83,9 @@ struct NIOSMTPUnitTests {
         let anonymous = SignInMethod.anonymous
         switch anonymous {
         case .anonymous:
-            #expect(Bool(true))
+            #expect(true)
         case .credentials:
-            #expect(Bool(false), "unexpected credentials")
+            Issue.record("unexpected credentials")
         }
 
         let credentials = SignInMethod.credentials(username: "u", password: "p")
@@ -94,7 +94,7 @@ struct NIOSMTPUnitTests {
             #expect(username == "u")
             #expect(password == "p")
         case .anonymous:
-            #expect(Bool(false), "unexpected anonymous")
+            Issue.record("unexpected anonymous")
         }
     }
 

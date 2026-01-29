@@ -38,23 +38,14 @@ struct TestSMTPConfig {
         //   pass: "app-password"
         //   from: "sender@example.com"
         //   to: "recipient@example.com"
-        //
-        // When values are empty, tests will skip by checking isComplete.
         let env = ProcessInfo.processInfo.environment
         return TestSMTPConfig(
-            host: env["SMTP_HOST"] ?? "",
-            user: env["SMTP_USER"] ?? "",
-            pass: env["SMTP_PASS"] ?? "",
-            from: env["SMTP_FROM"] ?? "",
-            to: env["SMTP_TO"] ?? ""
+            host: env["SMTP_HOST"]!,
+            user: env["SMTP_USER"]!,
+            pass: env["SMTP_PASS"]!,
+            from: env["SMTP_FROM"]!,
+            to: env["SMTP_TO"]!
         )
     }
 
-    var isComplete: Bool {
-        !host.isEmpty
-            && !user.isEmpty
-            && !pass.isEmpty
-            && !from.isEmpty
-            && !to.isEmpty
-    }
 }

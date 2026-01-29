@@ -39,7 +39,6 @@ struct NIOSMTPTests {
 
     @Test
     func plainText() async throws {
-        if !config.isComplete { return }
         let raw = rawMessage(
             from: config.from,
             to: config.to,
@@ -56,7 +55,6 @@ struct NIOSMTPTests {
 
     @Test
     func hmtl() async throws {
-        if !config.isComplete { return }
         let raw = rawMessage(
             from: config.from,
             to: config.to,
@@ -74,7 +72,6 @@ struct NIOSMTPTests {
 
     @Test
     func attachment() async throws {
-        if !config.isComplete { return }
         let boundary = "boundary-test"
         let raw = rawMultipartMessage(
             from: config.from,
