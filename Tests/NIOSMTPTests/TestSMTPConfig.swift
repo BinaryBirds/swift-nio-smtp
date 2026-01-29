@@ -5,7 +5,11 @@
 //  Created by Binary Birds on 2026. 01. 26..
 //
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 struct TestSMTPConfig {
     let host: String
@@ -19,11 +23,11 @@ struct TestSMTPConfig {
         // to hardcoded values below.
         //
         // Environment variables (preferred):
-        //   NIO_SMTP_TEST_HOST / SMTP_HOST
-        //   NIO_SMTP_TEST_USER / SMTP_USER
-        //   NIO_SMTP_TEST_PASS / SMTP_PASS
-        //   NIO_SMTP_TEST_FROM / SMTP_FROM
-        //   NIO_SMTP_TEST_TO   / SMTP_TO
+        //   SMTP_HOST
+        //   SMTP_USER
+        //   SMTP_PASS
+        //   SMTP_FROM
+        //   SMTP_TO
         //
         // To run integration tests locally without env vars, fill in the values
         // below with a real SMTP host, credentials and valid from/to addresses.
@@ -38,11 +42,11 @@ struct TestSMTPConfig {
         // When values are empty, tests will skip by checking isComplete.
         let env = ProcessInfo.processInfo.environment
         return TestSMTPConfig(
-            host: env["NIO_SMTP_TEST_HOST"] ?? env["SMTP_HOST"] ?? "",
-            user: env["NIO_SMTP_TEST_USER"] ?? env["SMTP_USER"] ?? "",
-            pass: env["NIO_SMTP_TEST_PASS"] ?? env["SMTP_PASS"] ?? "",
-            from: env["NIO_SMTP_TEST_FROM"] ?? env["SMTP_FROM"] ?? "",
-            to: env["NIO_SMTP_TEST_TO"] ?? env["SMTP_TO"] ?? ""
+            host: env["SMTP_HOST"] ?? "",
+            user: env["SMTP_USER"] ?? "",
+            pass: env["SMTP_PASS"] ?? "",
+            from: env["SMTP_FROM"] ?? "",
+            to: env["SMTP_TO"] ?? ""
         )
     }
 
