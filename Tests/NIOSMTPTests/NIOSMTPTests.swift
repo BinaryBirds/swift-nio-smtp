@@ -1,5 +1,5 @@
 //
-//  swift-nio-smtpTests.swift
+//  NIOSMTPTests.swift
 //  swift-nio-smtp
 //
 //  Created by Binary Birds on 2026. 01. 27..

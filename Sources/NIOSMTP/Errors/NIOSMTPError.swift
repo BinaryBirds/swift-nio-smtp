@@ -1,5 +1,5 @@
 //
-//  swift-nio-smtpError.swift
+//  NIOSMTPError.swift
 //  swift-nio-smtp
 //
 //  Created by Tibor Bodecs on 2020. 04. 28..
