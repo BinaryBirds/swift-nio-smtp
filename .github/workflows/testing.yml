@@ -31,6 +31,7 @@ jobs:
       docc_warnings_check_enabled : true
 
   tests-with-envs:
+    name: Test with ENVs
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -44,9 +45,9 @@ jobs:
         
       - name: Test
         env:
-          SES_ID: ${{ secrets.SMTP_HOST }}
-          SES_SECRET: ${{ secrets.SMTP_USER }}
-          SES_REGION: ${{ secrets.SMTP_PASS }}
-          MAIL_FROM: ${{ secrets.SMTP_FROM }}
-          MAIL_TO: ${{ secrets.SMTP_TO }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          SMTP_TO: ${{ secrets.SMTP_TO }}
         run: swift test --parallel --enable-code-coverage
